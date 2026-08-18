@@ -1,0 +1,1 @@
+ROAD -> Extrair IDS -> Converter IDS -> Sliding window -> X_train, y_train -> Embedding layer -> GRU -> Dropout -> Dense(N)
