@@ -1,5 +1,8 @@
 from pathlib import Path
 
+import pandas as pd
+import numpy as np
+
 def get_file_paths(road_path, directory, filenames):
     """
     Get paths for the files specified in the configuration.
@@ -13,7 +16,7 @@ def get_file_paths(road_path, directory, filenames):
         File names without the .csv extension.
 
     directory : str
-        Dataset dir: "train" or "test".
+        Dataset directory, e.g. "ambient" or "attacks".
 
     Returns
     -------
@@ -24,10 +27,18 @@ def get_file_paths(road_path, directory, filenames):
     complete_path = Path(road_path) / "signal_extractions" / directory
 
     return [
-        split_path / f"{filename}.csv"
+        complete_path	 / f"{filename}.csv"
         for filename in filenames
     ]
 
+def load_ids(file_path):
+    """
+    Load CAN IDs from a ROAD CSV file.
+    """
+
+    df = pd.read_csv(file_path)
+
+    return df["ID"].to_numpy()
 
 def create_id_mapping(ids):
     """
@@ -46,3 +57,13 @@ def create_id_mapping(ids):
     }
 
     return id_to_index, index_to_id
+
+def encode_ids(ids, id_to_index):
+    """
+    Convert CAN IDs to integer indices using the ID mapping.
+    """
+
+    return np.array(
+        [id_to_index[can_id] for can_id in ids],
+        dtype=np.int32
+    )
