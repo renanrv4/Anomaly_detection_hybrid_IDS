@@ -1,27 +1,38 @@
 from pathlib import Path
 
-# Function to get all .csv files in a dir
-def get_files(path):
-    path = Path(path)
+def get_file_paths(road_path, directory, filenames):
+    """
+    Get paths for the files specified in the configuration.
 
-    return [file for file in path.glob("*.csv") if file.is_file() ]
+    Parameters
+    ----------
+    road_path : str
+        Path to the ROAD dataset.
 
-# ==============================
-# Extracting files from ROAD * Use the signal extractions files (they are already decoded)
-# ==============================
+    filenames : list[str]
+        File names without the .csv extension.
 
-def get_ambient_files(road_path):
-    ambient_path = Path(road_path) / "signal_extractions" / "ambient"
+    directory : str
+        Dataset dir: "train" or "test".
 
-    return get_files(ambient_path)
+    Returns
+    -------
+    list[Path]
+        Paths to the selected CSV files.
+    """
 
-def get_attack_files(road_path):
-    attack_path = Path(road_path) / "signal_extractions" / "attacks"
+    complete_path = Path(road_path) / "signal_extractions" / directory
 
-    return get_files(attack_path)
+    return [
+        split_path / f"{filename}.csv"
+        for filename in filenames
+    ]
 
-# Function to map unique ids
+
 def create_id_mapping(ids):
+    """
+    Create mappings between CAN IDs and integer indices.
+    """
     unique_ids = sorted(set(ids))
 
     id_to_index = {
@@ -31,7 +42,7 @@ def create_id_mapping(ids):
 
     index_to_id = {
         index: can_id
-        for can_id, index in id_to_index.items
+        for can_id, index in id_to_index.items()
     }
 
     return id_to_index, index_to_id

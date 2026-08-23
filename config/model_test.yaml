@@ -1,0 +1,12 @@
+sliding_window:
+  n: 5
+
+model:
+  embedding_dim: 32
+  gru_units: 128
+  dropout: 0.2
+
+training:
+  batch_size: 64
+  epochs: 50
+  learning_rate: 0.001
