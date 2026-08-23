@@ -1,7 +1,7 @@
 dataset:
   name: road
 
-  path: /home/rsc8/road
+  path: /home/CIN/rsc8/road
 
   train:
     directory: ambient

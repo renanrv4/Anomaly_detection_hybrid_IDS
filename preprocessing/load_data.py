@@ -67,3 +67,15 @@ def encode_ids(ids, id_to_index):
         [id_to_index[can_id] for can_id in ids],
         dtype=np.int32
     )
+
+def load_multiple_ids(file_paths):
+    """
+    Load and concatenate CAN IDs from multiple ROAD CSV files.
+    """
+
+    ids = [
+        load_ids(file_path)
+        for file_path in file_paths
+    ]
+
+    return np.concatenate(ids)
