@@ -1,8 +1,8 @@
 import tensorflow as tf
 
 from preprocessing.load_data import (get_file_paths, load_multiple_ids, create_id_mapping, encode_ids)
-
 from preprocessing.sliding_window import create_sliding_windows
+from preprocessing.split_data import train_validation_split
 
 from models.gru import GRUModel
 
@@ -33,6 +33,33 @@ def prepare_training_data(road_path, directory, filenames, n):
 
     return X, y, id_to_index, index_to_id
 
+def prepare_training_data_split(road_path, directory, filenames, n, validation_ratio=0.2):
+    """
+    Prepare the training and validation data from benign CAN IDs.
+    """
+
+    X, y, id_to_index, index_to_id = prepare_training_data(
+        road_path,
+        directory,
+        filenames,
+        n
+    )
+
+    X_train, X_val, y_train, y_val = train_validation_split(
+        X,
+        y,
+        validation_ratio
+    )
+
+    return (
+        X_train,
+        X_val,
+        y_train,
+        y_val,
+        id_to_index,
+        index_to_id
+    )
+
 def create_model(config, num_ids):
     """
     Create the GRU model from the configuration.
@@ -58,10 +85,11 @@ def compile_model(model, config):
         metrics=["accuracy"]
     )
 
-def train_model(model, X, y, config):
+def train_model(model, X_train, y_train, X_val, y_val, config):
     history = model.fit(
-        X,
-        y,
+        X_train,
+        y_train,
+        validation_data=(X_val, y_val),
         batch_size=config["training"]["batch_size"],
         epochs=config["training"]["epochs"]
     )
@@ -76,11 +104,14 @@ def run_training(dataset_config, model_config):
     dataset = dataset_config["dataset"]
 
     # 1. Prepare training data
-    X, y, id_to_index, index_to_id = prepare_training_data(
-        dataset["path"],
-        dataset["train"]["directory"],
-        dataset["train"]["files"],
-        model_config["sliding_window"]["n"]
+    X_train, X_val, y_train, y_val, id_to_index, index_to_id = (
+        prepare_training_data_split(
+            dataset["path"],
+            dataset["train"]["directory"],
+            dataset["train"]["files"],
+            model_config["sliding_window"]["n"],
+            validation_ratio=0.2
+        )
     )
 
     # 2. Create model
@@ -100,8 +131,10 @@ def run_training(dataset_config, model_config):
     # 4. Train model
     history = train_model(
         model,
-        X,
-        y,
+        X_train,
+        y_train,
+        X_val,
+	y_val,
         model_config
     )
 
