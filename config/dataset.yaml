@@ -22,10 +22,6 @@ dataset:
     directory: attacks
 
     files:
-      - accelerator_attack_drive_1
-      - accelerator_attack_drive_2
-      - accelerator_attack_reverse_1
-      - accelerator_attack_reverse_2
       - correlated_signal_attack_1_masquerade
       - correlated_signal_attack_2_masquerade
       - correlated_signal_attack_3_masquerade
