@@ -91,7 +91,8 @@ def train_model(model, X_train, y_train, X_val, y_val, config):
         y_train,
         validation_data=(X_val, y_val),
         batch_size=config["training"]["batch_size"],
-        epochs=config["training"]["epochs"]
+        epochs=config["training"]["epochs"],
+	verbose=1
     )
 
     return history
@@ -138,4 +139,4 @@ def run_training(dataset_config, model_config):
         model_config
     )
 
-    return model, history, id_to_index, index_to_id
+    return model, history, id_to_index, index_to_id, X_val, y_val

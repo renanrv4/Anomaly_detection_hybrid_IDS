@@ -2,6 +2,7 @@ from pathlib import Path
 
 import pandas as pd
 import numpy as np
+import json
 
 def get_file_paths(road_path, directory, filenames):
     """
@@ -39,6 +40,18 @@ def load_ids(file_path):
     df = pd.read_csv(file_path)
 
     return df["ID"].to_numpy()
+
+def load_ids_with_timestamps(file_path):
+    """
+    Load CAN IDs and timestamps from a ROAD CSV file.
+    """
+
+    df = pd.read_csv(file_path)
+
+    return (
+        df["ID"].to_numpy(),
+        df["Time"].to_numpy()
+    )
 
 def create_id_mapping(ids):
     """
@@ -79,3 +92,18 @@ def load_multiple_ids(file_paths):
     ]
 
     return np.concatenate(ids)
+
+def load_attack_metadata(road_path):
+    """
+    Load metadata for ROAD attack files.
+    """
+
+    metadata_path = (
+        Path(road_path)
+        / "signal_extractions"
+        / "attacks"
+        / "metadata.json"
+    )
+
+    with open(metadata_path) as file:
+        return json.load(file)
