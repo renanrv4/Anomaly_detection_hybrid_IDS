@@ -7,6 +7,9 @@ model:
   dropout: 0.2
 
 training:
-  batch_size: 64
+  batch_size: 1024
   epochs: 100
   learning_rate: 0.001
+
+results:
+  directory: /home/CIN/rsc8/Anomaly_detection_hybrid_IDS/results

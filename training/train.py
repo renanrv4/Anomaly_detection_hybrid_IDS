@@ -1,4 +1,5 @@
 import tensorflow as tf
+import pandas as pd
 
 from preprocessing.load_data import (get_file_paths, load_multiple_ids, create_id_mapping, encode_ids)
 from preprocessing.sliding_window import create_sliding_windows
@@ -97,6 +98,15 @@ def train_model(model, X_train, y_train, X_val, y_val, config):
 
     return history
 
+def save_training_history(history, output_path):
+    history_data = history.history
+    history_df = pd.DataFrame(history_data)
+
+    history_df.index += 1
+    history_df.index.name = "epoch"
+
+    history_df.to_csv(output_path)
+
 def run_training(dataset_config, model_config):
     """
     Execute the complete training pipeline.
@@ -137,6 +147,13 @@ def run_training(dataset_config, model_config):
         X_val,
 	y_val,
         model_config
+    )
+
+    results_dir = model_config["results"]["directory"]
+
+    save_training_history(
+        history,
+        f"{results_dir}/training_history.csv"
     )
 
     return model, history, id_to_index, index_to_id, X_val, y_val
